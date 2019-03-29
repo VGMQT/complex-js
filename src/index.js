@@ -7,6 +7,11 @@
  * @return {Element}
  */
 function createDivWithText(text) {
+    const element = document.createElement('div');
+
+    element.textContent = text;
+
+    return element;
 }
 
 /**
@@ -16,6 +21,11 @@ function createDivWithText(text) {
  * @return {Element}
  */
 function createAWithHref(hrefValue) {
+    const element = document.createElement('a');
+
+    element.setAttribute('href', hrefValue);
+
+    return element;
 }
 
 /**
@@ -25,6 +35,7 @@ function createAWithHref(hrefValue) {
  * @param {Element} where - куда вставлять
  */
 function prepend(what, where) {
+    where.prepend(what);
 }
 
 /**
@@ -42,6 +53,16 @@ function prepend(what, where) {
  * т.к. следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
+    const array = [],
+        kids = where.children;
+
+    for (let i = 0; i < kids.length - 1; i++) {
+        if (kids[i].nextElementSibling.nodeName === 'P') {
+            array.push(kids[i]);
+        }
+    }
+
+    return array;
 }
 
 /**
@@ -53,13 +74,14 @@ function findAllPSiblings(where) {
  * @return {Array<string>}
  */
 function findError(where) {
-    var result = [];
+    const array = [],
+        kids = where.children;
 
-    for (var i = 0; i < where.childNodes.length; i++) {
-        result.push(where.childNodes[i].innerText);
+    for (let i = 0; i < kids.length; i++) {
+        array.push(kids[i].innerHTML);
     }
 
-    return result;
+    return array;
 }
 
 /**
@@ -76,6 +98,13 @@ function findError(where) {
  * должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
+    const kids = where.childNodes;
+
+    for (let i = 0; i < kids.length; i++) {
+        if (kids[i].nodeType === 3) {
+            where.removeChild(kids[i]);
+        }
+    }
 }
 
 /**
