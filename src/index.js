@@ -118,6 +118,17 @@ function deleteTextNodes(where) {
  * должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    const kids = where.childNodes;
+
+    for (let i = kids.length - 1; i >= 0; i--) {
+        let node = kids[i];
+
+        if (node.nodeType === 3) {
+            where.removeChild(node);
+        } else if (node.nodeType === 1) {
+            deleteTextNodesRecursive(node);
+        }
+    }
 }
 
 /**
@@ -143,6 +154,50 @@ function deleteTextNodesRecursive(where) {
  * }
  */
 function collectDOMStat(root) {
+    const stats = {
+        tags: {},
+        classes: {},
+        texts: 0
+    };
+
+    getStats(root);
+
+    function getStats(element) {
+        let kids = element.childNodes;
+
+        for (let i = 0; i < kids.length; i++) {
+            let node = kids[i];
+
+            checkForNodeType(node);
+        }
+    }
+
+    function checkForNodeType(n) {
+        if (n.nodeType === 3) {
+            stats.texts++;
+        } else if (n.nodeType === 1) {
+            let tag = n.tagName,
+                classList = n.classList;
+
+            addToStats(stats.tags, tag);
+
+            for (let i = 0; i < classList.length; i++) {
+                addToStats(stats.classes, classList[i]);
+            }
+
+            getStats(n);
+        }
+    }
+
+    function addToStats(obj, keyName) {
+        if (obj.hasOwnProperty(keyName)) {
+            obj[keyName]++;
+        } else {
+            obj[keyName] = 1;
+        }
+    }
+
+    return stats;
 }
 
 /**
@@ -177,6 +232,30 @@ function collectDOMStat(root) {
  * }
  */
 function observeChildNodes(where, fn) {
+    const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                fn({
+                    type: 'insert',
+                    nodes: [].slice.call(mutation.addedNodes)
+                });
+            }
+
+            if (mutation.removedNodes.length) {
+                fn({
+                    type: 'remove',
+                    nodes: [].slice.call(mutation.removedNodes)
+                });
+            }
+        })
+    });
+
+    let config = {
+        subtree: true,
+        childList: true
+    };
+
+    observer.observe(where, config);
 }
 
 export {
