@@ -36,6 +36,20 @@ let homeworkContainer = document.querySelector('#homework-container');
  * @return {Promise<Array<{name: string}>>}
  */
 function loadTowns() {
+    return new Promise((resolve, reject) => {
+        const ajax = new XMLHttpRequest();
+
+        ajax.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+        ajax.responseType = 'json';
+        ajax.send();
+        ajax.addEventListener('load', () => {
+            if (status === 200) {
+                resolve(ajax.response);
+            } else {
+                reject(status);
+            }
+        });
+    });
 }
 
 /**
@@ -52,8 +66,10 @@ function loadTowns() {
  * @return {boolean}
  */
 function isMatching(full, chunk) {
+    return full.toUpperCase().indexOf(chunk.toUpperCase()) !== -1;
 }
 
+// SKIP THIS due to invalid testing // Vlad
 let loadingBlock = homeworkContainer.querySelector('#loading-block');
 let filterBlock = homeworkContainer.querySelector('#filter-block');
 let filterInput = homeworkContainer.querySelector('#filter-input');
