@@ -7,6 +7,11 @@
  * @return {Promise}
  */
 function delayPromise(seconds) {
+    return new Promise ((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, seconds * 1000);
+    });
 }
 
 /**
@@ -17,6 +22,20 @@ function delayPromise(seconds) {
  * @return {Promise<Array<{name: String}>>}
  */
 function loadAndSortTowns() {
+    return new Promise((resolve, reject) => {
+        const ajax = new XMLHttpRequest();
+
+        ajax.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+        ajax.responseType = 'json';
+        ajax.send();
+        ajax.addEventListener('load', () => {
+            if (status === 200) {
+                resolve(ajax.response.sort((a, b) => a.name.localeCompare(b.name)));
+            } else {
+                reject(status);
+            }
+        });
+    });
 }
 
 export {
