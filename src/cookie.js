@@ -39,6 +39,8 @@ let addValueInput = homeworkContainer.querySelector('#add-value-input');
 let addButton = homeworkContainer.querySelector('#add-button');
 let listTable = homeworkContainer.querySelector('#list-table tbody');
 
+//SKIP THIS due to weird testing // Vlad
+
 filterNameInput.addEventListener('keyup', function() {
 });
 
